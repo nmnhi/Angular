@@ -1,0 +1,410 @@
+******************************************************************* ngModel **********************************************************************************************
+
+[(ngModel)]: ngModel directive in Angular for two way data binding, but you need write it in a bit different way like [(ngModel)] (Banana in a box syntax).
+Ex:
+app/app.component.ts:
+    import { Component } from '@angular/core';
+
+    @Component({
+    selector: 'my-app',
+    template: `<h1>My First Angular 2 App</h1>
+        <input type="text" [(ngModel)]="myModel"/>
+        {{myModel}}
+    `
+    })
+    export class AppComponent { 
+    myModel: any;
+    }
+
+******************************************************************* ngFor **********************************************************************************************
+
+NgFor is a structural directive, meaning that it changes the structure of the DOM.
+It’s point is to repeat a given HTML template once for each value in an array, each time passing it the array value as context for string interpolation or binding.
+
+The syntax is *ngFor="let <value> of <collection>".
+
+Ex:
+    @Component({
+    selector: 'ngfor-example',
+    template: `
+    <ul>
+    <li *ngFor="let person of people"> (1)
+        {{ person.name }}
+    </li>
+    </ul>
+    `
+    })
+    class NgForExampleComponent {
+    people: any[] = [
+        {
+        "name": "Douglas  Pace"
+        },
+        {
+        "name": "Mcleod  Mueller"
+        },
+        {
+        "name": "Day  Meyers"
+        },
+        {
+        "name": "Aguirre  Ellis"
+        },
+        {
+        "name": "Cook  Tyson"
+        }
+    ];
+    }
+
+#### Index
+Sometimes we also want to get the index of the item in the array we are iterating over.
+We can do this by adding another variable to our ngFor expression and making it equal to index, like so:
+Ex:
+    <ul> (1)
+        <li *ngFor="let person of people; let i = index"> (1)
+            {{ i + 1 }} - {{ person.name }} (2)
+        </li>
+    </ul>
+
+### Grouping
+
+If our data structure was in fact grouped by country we can use two ngFor directives, like so:
+Ex:
+    @Component({
+        selector: 'ngfor-grouped-example',
+        template: `
+        <h4>NgFor (grouped)</h4>
+        <ul *ngFor="let group of peopleByCountry"> (1)
+        <li>{{ group.country }}</li>
+        <ul>
+            <li *ngFor="let person of group.people"> (2)
+            {{ person.name }}
+            </li>
+        </ul>
+        </ul>
+        `
+    })
+    class NgForGroupedExampleComponent {
+
+        peopleByCountry: any[] = [
+            {
+            'country': 'UK',
+            'people': [
+                {
+                "name": "Douglas  Pace"
+                },
+                {
+                "name": "Mcleod  Mueller"
+                },
+            ]
+            },
+            {
+            'country': 'US',
+            'people': [
+                {
+                "name": "Day  Meyers"
+                },
+                {
+                "name": "Aguirre  Ellis"
+                },
+                {
+                "name": "Cook  Tyson"
+                }
+            ]
+            }
+        ];
+    }
+
+############ Summary ##############
+
+We use the NgFor directive to loop over an array of items and create multiple elements dynamically from a template element.
+The template element is the element the directive is attached to.
+We can nest muliple NgFor directives together.
+We can get the index of the item we are looping over by assigning index to a variable in the NgFor expression.
+
+
+******************************************************************* ngIf **********************************************************************************************
+
+The NgIf directive is used when you want to display or remove an element based on a condition.
+If the condition is false the element the directive is attached to will be removed from the DOM.
+
+Important:
+- The difference between [hidden]='false' and *ngIf='false' is that the first method simply hides the element. The second method with ngIf removes the element completely from the DOM.
+
+We define the condition by passing an expression to the directive which is evaluated in the context of its host component.
+The syntax is: *ngIf="<condition>"
+
+Ex:
+    @Component({
+    selector: 'ngif-example',
+    template: `
+    <h4>NgIf</h4>
+    <ul *ngFor="let person of people">
+    <li *ngIf="person.age < 30"> (1)
+    {{ person.name }} ({{ person.age }})
+    </li>
+    </ul>
+    `
+    })
+    class NgIfExampleComponent {
+
+    people: any[] = [
+        {
+        "name": "Douglas  Pace",
+        "age": 35
+        },
+        {
+        "name": "Mcleod  Mueller",
+        "age": 32
+        },
+        {
+        "name": "Day  Meyers",
+        "age": 21
+        },
+        {
+        "name": "Aguirre  Ellis",
+        "age": 34
+        },
+        {
+        "name": "Cook  Tyson",
+        "age": 32
+        }
+    ];
+    }
+
+
+Important:
+    We can’t have two structural directives, directives starting with a *, attached to the same element.
+    The below code would not work:
+
+    <ul *ngFor="let person of people" *ngIf="person.age < 30">
+        <li>{{ person.name }}</li>
+    </ul>
+
+
+******************************************************************* NgSwitch **********************************************************************************************
+
+Let’s imagine we wanted to print peoples names in different colours depending on where they are from. Green for UK, Blue for USA, Red for HK.
+With Bootstrap we can change the text color by using the text-danger, text-success, text-warning and text-primary classes.
+
+This directive allows us to render different elements depending on a given condition, in fact the NgSwitch directive is actually a number of directives working in conjunction, like so:
+
+Ex:
+    @Component({
+    selector: 'ngswitch-example',
+    template: `<h4>NgSwitch</h4>
+    <ul *ngFor="let person of people"
+        [ngSwitch]="person.country"> (1)
+
+    <li *ngSwitchCase="'UK'" (2)
+        class="text-success">{{ person.name }} ({{ person.country }})
+    </li>
+    <li *ngSwitchCase="'USA'"
+        class="text-primary">{{ person.name }} ({{ person.country }})
+    </li>
+    <li *ngSwitchCase="'HK'"
+        class="text-danger">{{ person.name }} ({{ person.country }})
+    </li>
+    <li *ngSwitchDefault (3)
+        class="text-warning">{{ person.name }} ({{ person.country }})
+    </li>
+    </ul>`
+    })
+    class NgSwitchExampleComponent {
+
+    people: any[] = [
+        {
+        "name": "Douglas  Pace",
+        "age": 35,
+        "country": 'MARS'
+        },
+        {
+        "name": "Mcleod  Mueller",
+        "age": 32,
+        "country": 'USA'
+        },
+        {
+        "name": "Day  Meyers",
+        "age": 21,
+        "country": 'HK'
+        },
+        {
+        "name": "Aguirre  Ellis",
+        "age": 34,
+        "country": 'UK'
+        },
+        {
+        "name": "Cook  Tyson",
+        "age": 32,
+        "country": 'USA'
+        }
+    ];
+    }
+
+We bind an expression to the ngSwitch directive.
+The ngSwitchCase directive lets us define a condition which if it matches the expression in (1) will render the element it’s attached to.
+If no conditions are met in the switch statement it will check to see if there is an ngSwitchDefault directive, if there is it will render the element that’s attached to, however it is optional — if it’s not present it simply won’t display anything if no matching ngSwitchCase directive is found.
+The key difference between the ngIf solution is that by using NgSwitch we evaluate the expression only once and then choose the element to display based on the result.
+
+- Note
+    The use of NgSwitch here is just for example and isn’t an efficient way of solving this problem. We would use either the NgStyle or NgClass directives which we’ll cover in the next lecture.
+
+- Summary
+    With NgIf we can conditionally add or remove an element from the DOM.
+    If we are faced with multiple conditions a cleaner alternative to multiple nested NgIf statements is the NgSwitch series of directives.
+
+
+******************************************************************* NgStyle **********************************************************************************************
+
+The NgStyle directive lets you set a given DOM elements style properties.
+One way to set styles is by using the NgStyle directive and assigning it an object literal, like so:
+Ex:
+    <div [ngStyle]="{'background-color':'green'}"></<div>
+
+ngStyle becomes much more useful when the value is dynamic. The values in the object literal that we assign to ngStyle can be JavaScript expressions which are evaluated and the result of that expression is used as the value of the CSS property, like this:
+Ex:
+    <div [ngStyle]="{'background-color':person.country === 'UK' ? 'green' : 'red' }"></<div>
+
+The above code uses the ternary operator to set the background color to green if the persons country is the UK else red.
+But the expression doesn’t have to be inline, we can call a function on the component instead.
+To demonstrate this let’s flesh out a full example. Similar to the ones we’ve created before let’s loop through an array of people and print out there names in different colors depending on the country they are from.The above code uses the ternary operator to set the background color to green if the persons country is the UK else red.
+But the expression doesn’t have to be inline, we can call a function on the component instead.
+To demonstrate this let’s flesh out a full example. Similar to the ones we’ve created before let’s loop through an array of people and print out there names in different colors depending on the country they are from.
+
+Ex:
+
+    @Component({
+    selector: 'ngstyle-example',
+    template: `<h4>NgStyle</h4>
+    <ul *ngFor="let person of people">
+    <li [ngStyle]="{'color':getColor(person.country)}"> {{ person.name }} ({{ person.country }})
+    </li>
+    </ul>
+    `
+    })
+    class NgStyleExampleComponent {
+
+    getColor(country) {
+        switch (country) {
+        case 'UK':
+            return 'green';
+        case 'USA':
+            return 'blue';
+        case 'HK':
+            return 'red';
+        }
+    }
+
+    people: any[] = [
+        {
+        "name": "Douglas  Pace",
+        "country": 'UK'
+        },
+        {
+        "name": "Mcleod  Mueller",
+        "country": 'USA'
+        },
+        {
+        "name": "Day  Meyers",
+        "country": 'HK'
+        },
+        {
+        "name": "Aguirre  Ellis",
+        "country": 'UK'
+        },
+        {
+        "name": "Cook  Tyson",
+        "country": 'USA'
+        }
+    ];
+    }
+
+
+########### Alternative Syntax ##########
+As well as using the ngStyle directive we can also set individual style properties using the [style.<property>] syntax, for example [style.color]="getColor(person.country)"
+Ex:
+    <ul *ngFor="let person of people">
+        <li [style.color]="getColor(person.country)">{{ person.name }} ({{ person.country }})</li>
+    </ul>
+
+******************************************************************* NgClass **********************************************************************************************
+
+The NgClass directive allows you to set the CSS class dynamically for a DOM element.
+There are two ways to use this directive, the first is by passing an object literal to the directive, like so:
+Ex:
+    [ngClass]="{'text-success':true}"
+
+The value can also be an expression, so we can re-write the above to be.
+Ex:
+    [ngClass]="{'text-success':person.country === 'UK'}"
+
+Let’s implement the colored names demo app using ngClass instead of ngStyle.
+Ex:
+    <h4>NgClass</h4>
+    <ul *ngFor="let person of people">
+        <li [ngClass]="{
+            'text-success':person.country === 'UK',
+            'text-primary':person.country === 'USA',
+            'text-danger':person.country === 'HK'
+        }">{{ person.name }} ({{ person.country }})
+        </li>
+    </ul>
+
+########## Alternative Syntax #########
+
+We can also set a class on an element by binding to the input property binding called class, like so [class]="'text-success'"
+
+- Note
+ The 'text-success' is wrapped with single quotes so when it’s evaluated as JavaScript it doesn’t try to treat text-success as a variable.
+
+- Important
+    The above syntax removes all the existing classes for that element and replaces them with just 'text-success'.
+
+If we want to just add text-success to the list of classes already set on the element we can use the extended syntax [class.<class-name>]='truthy expression'
+So for instance to add text-success to the list of classes for an element we can use:
+Ex:
+    [class.text-success]="true"
+
+Or just like before we can use an expression as the value, like so:
+Ex:
+    [class.card-success]="person.country === 'UK'"
+
+And we can actually specify multiple values at one time, like so:
+Ex:
+    <ul *ngFor="let person of people">
+        <li [class.text-success]="person.country === 'UK'"
+            [class.text-primary]="person.country === 'USA'"
+            [class.text-danger]="person.country === 'HK'">{{ person.name }} ({{ person.country }})
+        </li>
+    </ul>
+
+
+******************************************************************* ng-template **********************************************************************************************
+
+Structural Directives are directives which change the structure of the DOM by adding or removing elements.
+There are three built-in structural directives, NgIf, NgFor and NgSwitch.
+These directives work by using the HTML5 <ng-template> tag. This is a new tag in HTML which is specifically designed to hold template code. It can sit under the body element but any content inside it is not shown in the browser.
+Using ng-template we can write an ngIf expression as:
+
+TypeScript Ex:
+    <ng-template [ngIf]='condition'>
+        <p>I am the content to show</p>
+    </ng-template>
+If we go back to our joke app example and replace the hiding and showing of a joke with this template version of ngIf we would end up with:
+
+TypeScript Ex:
+    <ng-template [ngIf]="!data.hide">
+        <p class="card-text">
+            {{ data.punchline }}
+        </p>
+    </ng-template>
+The NgFor version is slightly more complex:
+
+TypeScript Ex:
+    <ng-template ngFor (1)
+                let-j (2)
+                [ngForOf]="jokes"> (3)
+        <joke [joke]="j"></joke>
+    </ng-template>
+    
+This is the NgFor directive itself.
+This is another way of declaring a template local reference variable, equivalent to #j.
+[ngForOf] is an input property of the NgFor directive.
