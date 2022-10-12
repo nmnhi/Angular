@@ -408,3 +408,7 @@ TypeScript Ex:
 This is the NgFor directive itself.
 This is another way of declaring a template local reference variable, equivalent to #j.
 [ngForOf] is an input property of the NgFor directive.
+
+
+
+https://codecraft.tv/courses/angular/quickstart/overview/
